@@ -100,7 +100,7 @@ module.exports = class extends Generator {
 	    this.log('Creating API Proxy bundle...');
 	    this.spawnCommandSync('openapi2apigee',
       		['generateApi', `${this.answers.name}-${this.answers.version}`, 
-      			'-s', this.answers.spec, '-d', this.answers.destination] );
+      			'-s', this.answers.spec, '-d', this.answers.destination, '-U', this.answers.targetUrl] );
       	var dir = `${this.answers.destination}/${this.answers.name}-${this.answers.version}/openapi`;
   		if (!fs.existsSync(dir)){
 		    fs.mkdirSync(dir);
