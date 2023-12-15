@@ -197,6 +197,15 @@ module.exports = class extends Generator {
   		this.fs.commit(()=>{});
     }
 
+    copyRegistryResources(){
+        this.fs.copyTpl(
+           this.templatePath('registry'),
+           this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/registry`),
+           {name : this.answers.name, version: this.answers.version}
+        );
+        this.fs.commit(()=>{});
+   }
+
     copyConfigResources(){
 	     this.fs.copyTpl(
 	        this.templatePath('resources'),
