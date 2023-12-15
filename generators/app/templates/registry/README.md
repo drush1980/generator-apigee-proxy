@@ -1,1 +1,1 @@
-*registry manifest will go here*
+* registry manifest will go here *
