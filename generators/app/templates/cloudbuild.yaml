@@ -31,7 +31,7 @@ steps:
   args:
     - -c 
     - |
-      source /workspace/creds &&
+      source /workspace/build_vars &&
       mvn -f pom.xml -ntp install -P$build_profile -DprojectId=$PROJECT_ID -Doptions=update -DapiConfigFile=./registry/manifest.yaml -Dbearer=${build_token}
 - name: 'gcr.io/cloud-builders/npm'
   id: install-npm-modules
