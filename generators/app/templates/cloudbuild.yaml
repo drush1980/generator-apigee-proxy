@@ -26,20 +26,19 @@ steps:
   entrypoint: 'bash'
   args: [ '-c', "gcloud secrets versions access latest --secret=apigee-org-admin --format='get(payload.data)' | tr '_-' '/+' | base64 -d > admin.json" ]
 - name: 'gcr.io/cloud-builders/mvn'
-  id: "Create/Update API in Registry"
+  id: update-registry
   entrypoint: 'bash'
   args:
     - -c 
     - |
       source /workspace/build_vars &&
-      mvn -f pom.xml -ntp install -P$build_profile -DprojectId=$PROJECT_ID -Doptions=update -DapiConfigFile=./registry/manifest.yaml -Dbearer=${build_token}
+      mvn -f cloudbuild-pom.xml -ntp apigee-registry:api apigee-registry:apiversion apigee-registry:apiversionspec apigee-registry:apideployment apigee-registry:apiartifact -P$build_profile -DprojectId=$PROJECT_ID -Doptions=update -DapiConfigFile=./registry/manifest.yaml -Dbearer=${build_token}
 - name: 'gcr.io/cloud-builders/npm'
   id: install-npm-modules
   args: ['install']
-- name: 'gcr.io/cloud-builders/nodejs/yarn'
+- name: 'gcr.io/cloud-builders/npm'
   id: apigee-lint
-  entrypoint: 'bash'
-  args: ['-c', 'node_modules/apigeelint/cli.js -s . -f table.js']
+  args: ['run', 'apigeelint']
 # - name: 'gcr.io/cloud-builders/nodejs/yarn'
 #   id: unit-testing-and-code-coverage
 #   entrypoint: 'bash'
@@ -79,7 +78,7 @@ steps:
     - |
       # Read environment variables from disk
       source /workspace/build_vars &&
-      mvn -f cloudbuild-pom.xml -ntp apigee-enterprise:deploy -P${build_profile} -Dorg=$PROJECT_ID -Ddeployment.suffix=${build_prefix} -Dfile=admin.json
+      mvn -f cloudbuild-pom.xml -ntp apigee-enterprise:deploy -P${build_profile} -Dorg=$PROJECT_ID -Ddeployment.suffix=${build_prefix} -Dbearer=${build_token}
 # - name: 'gcr.io/cloud-builders/nodejs/yarn'
 #   id: devint-testing
 #   entrypoint: 'bash'

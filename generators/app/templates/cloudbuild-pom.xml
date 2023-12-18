@@ -91,6 +91,11 @@
 				    <artifactId>apigee-config-maven-plugin</artifactId>
 				    <version>2.5.0</version>
 			    </plugin>
+				<plugin>
+					<groupId>com.apigee.registry.config</groupId>
+				    <artifactId>apigee-registry-maven-plugin</artifactId>
+				    <version>1.0.2</version>
+			    </plugin>
 			</plugins>
 		</pluginManagement>
 
