@@ -233,7 +233,7 @@ module.exports = class extends Generator {
 	     this.fs.copyTpl(
 	        this.templatePath('cloudbuild-pom.xml'),
 	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/cloudbuild-pom.xml`),
-	        {name : this.answers.name, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
+	        {name : this.answers.name, version: this.answers.version, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
 	     );
 	     this.fs.commit(()=>{});
     }

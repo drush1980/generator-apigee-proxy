@@ -217,7 +217,7 @@
 					<basedir>${target.root.dir}</basedir>
 					<includes>
 						<include>apiproxy/proxies/default.xml</include>
-						<include>apiproxy/<%= name %>-<%= version %>.xml</include>
+						<include>apiproxy/<%= name %>.xml</include>
 						<include>tests/dev-integration/**.js</include>
 					</includes>
 					<replacements>
