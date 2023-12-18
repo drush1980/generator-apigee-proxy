@@ -99,7 +99,7 @@ module.exports = class extends Generator {
 	async openapiToApigee(){
 	    this.log('Creating API Proxy bundle...');
 	    this.spawnCommandSync('openapi2apigee',
-      		['generateApi', `${this.answers.name}-${this.answers.version}`, 
+      		['generateApi', `${this.answers.name}`, 
       			'-s', this.answers.spec, '-d', this.answers.destination, '-U', this.answers.targetUrl] );
       	var dir = `${this.answers.destination}/${this.answers.name}-${this.answers.version}/openapi`;
   		if (!fs.existsSync(dir)){
@@ -322,7 +322,7 @@ module.exports = class extends Generator {
     }
 
     print(){
-    	let absolutePath = path.resolve(`${this.answers.destination}/${this.answers.name}-${this.answers.version}`);
+    	let absolutePath = path.resolve(`${this.answers.destination}/${this.answers.name}`);
     	this.log(`APIProxy created - ${absolutePath}`);
     }
 };
