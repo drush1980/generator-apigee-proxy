@@ -271,7 +271,7 @@ module.exports = class extends Generator {
 	     this.fs.copyTpl(
 	        this.templatePath('packagejson.txt'),
 	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/package.json`),
-	        {name : this.answers.name}
+	        {name : this.answers.name, version: this.answers.version}
 	     );
 	     this.fs.commit(()=>{});
     }
