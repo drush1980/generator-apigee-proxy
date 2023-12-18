@@ -225,16 +225,16 @@ module.exports = class extends Generator {
     }
 
     copyPomTemplate(){
-	     this.fs.copyTpl(
-	        this.templatePath('pom.xml'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/pom.xml`),
-	        {name : this.answers.name, version: this.answers.version, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
-	     );
 	    //  this.fs.copyTpl(
-	    //     this.templatePath('cloudbuild-pom.xml'),
-	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/cloudbuild-pom.xml`),
+	    //     this.templatePath('pom.xml'),
+	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/pom.xml`),
 	    //     {name : this.answers.name, version: this.answers.version, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
 	    //  );
+	     this.fs.copyTpl(
+	        this.templatePath('cloudbuild-pom.xml'),
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/cloudbuild-pom.xml`),
+	        {name : this.answers.name, version: this.answers.version, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
+	     );
 	     this.fs.commit(()=>{});
     }
 
