@@ -99,9 +99,9 @@ module.exports = class extends Generator {
 	async openapiToApigee(){
 	    this.log('Creating API Proxy bundle...');
 	    this.spawnCommandSync('openapi2apigee',
-      		['generateApi', `${this.answers.name}-${this.answers.version}`, 
+      		['generateApi', `${this.answers.name}`, 
       			'-s', this.answers.spec, '-d', this.answers.destination, '-U', this.answers.targetUrl] );
-      	var dir = `${this.answers.destination}/${this.answers.name}-${this.answers.version}/openapi`;
+      	var dir = `${this.answers.destination}/${this.answers.name}/openapi`;
   		if (!fs.existsSync(dir)){
 		    fs.mkdirSync(dir);
 		}
@@ -116,7 +116,7 @@ module.exports = class extends Generator {
   		}];
       	var filepath = `${dir}/openapi.json`;
       	fs.writeFileSync(filepath, JSON.stringify(api, undefined, 2)); 
-      	var openapiResourceDir = `${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/resources/oas`;
+      	var openapiResourceDir = `${this.answers.destination}/${this.answers.name}/apiproxy/resources/oas`;
   		if (!fs.existsSync(openapiResourceDir)){
 		    fs.mkdirSync(openapiResourceDir, { recursive: true });
 		}
@@ -124,7 +124,7 @@ module.exports = class extends Generator {
     }
 
     deleteZipFile(){
-		fsy.unlinkSync(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy.zip`);
+		fsy.unlinkSync(`${this.answers.destination}/${this.answers.name}/apiproxy.zip`);
     }
 
     copyPoliciesTemplate(){
@@ -132,42 +132,42 @@ module.exports = class extends Generator {
     		return;
 	     this.fs.copyTpl(
 	        this.templatePath('policies'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/policies`),
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/apiproxy/policies`),
 	        {}
 	     );
 	     this.fs.commit(()=>{});
     }
 
     setDescription(){
-    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/${this.answers.name}-${this.answers.version}.xml`);
+    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}/apiproxy/${this.answers.name}.xml`);
     	let doc = new DOMParser().parseFromString(srcDocument);
         let nodes = xpath.select("/APIProxy/Description", doc);
         nodes[0].textContent = "@description"; //will be used by pom to replace
-	    this.fs.write(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/${this.answers.name}-${this.answers.version}.xml`, doc.toString());
+	    this.fs.write(`${this.answers.destination}/${this.answers.name}/apiproxy/${this.answers.name}.xml`, doc.toString());
 	    this.fs.commit(()=>{});
     }
 
     setBasePath(){
-    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/proxies/default.xml`);
+    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}/apiproxy/proxies/default.xml`);
     	let doc = new DOMParser().parseFromString(srcDocument);
         let nodes = xpath.select("/ProxyEndpoint/HTTPProxyConnection/BasePath", doc);
         nodes[0].textContent = this.answers.basePath;
-	    this.fs.write(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/proxies/default.xml`, doc.toString());
+	    this.fs.write(`${this.answers.destination}/${this.answers.name}/apiproxy/proxies/default.xml`, doc.toString());
 	    this.fs.commit(()=>{});
     }
 
     removeVirtualhost(){
-    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/proxies/default.xml`);
+    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}/apiproxy/proxies/default.xml`);
     	let doc = new DOMParser().parseFromString(srcDocument);
         let nodes = xpath.select("/ProxyEndpoint/HTTPProxyConnection/VirtualHost", doc);
         doc.removeChild(nodes[0]); //default
         doc.removeChild(nodes[1]); //secure
-	    this.fs.write(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/proxies/default.xml`, doc.toString());
+	    this.fs.write(`${this.answers.destination}/${this.answers.name}/apiproxy/proxies/default.xml`, doc.toString());
 	    this.fs.commit(()=>{});
     }
 
     setTargetServer(){
-    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/targets/default.xml`);
+    	let srcDocument = this.fs.read(`${this.answers.destination}/${this.answers.name}/apiproxy/targets/default.xml`);
     	let doc = new DOMParser().parseFromString(srcDocument);
     	
     	let nodes = xpath.select("/TargetEndpoint/HTTPTargetConnection/URL", doc);
@@ -193,15 +193,15 @@ module.exports = class extends Generator {
 			serverObj.setAttribute("name", targetServers[i].trim());
     	}
 		*/
-    	this.fs.write(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/targets/default.xml`, doc.toString());
+    	this.fs.write(`${this.answers.destination}/${this.answers.name}/apiproxy/targets/default.xml`, doc.toString());
   		this.fs.commit(()=>{});
     }
 
     copyRegistryResources(){
         this.fs.copyTpl(
            this.templatePath('registry'),
-           this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/registry`),
-           {name : this.answers.name, version: this.answers.version}
+           this.destinationPath(`${this.answers.destination}/${this.answers.name}/registry`),
+           {name : this.answers.name}
         );
         this.fs.commit(()=>{});
    }
@@ -209,8 +209,8 @@ module.exports = class extends Generator {
     copyConfigResources(){
 	     this.fs.copyTpl(
 	        this.templatePath('resources'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/resources`),
-	        {name : this.answers.name, version: this.answers.version}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/resources`),
+	        {name : this.answers.name}
 	     );
 	     this.fs.commit(()=>{});
     }
@@ -218,8 +218,8 @@ module.exports = class extends Generator {
     copyTestTemplate(){
 	     this.fs.copyTpl(
 	        this.templatePath('tests'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/tests`),
-	        {name : this.answers.name, version: this.answers.version}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/tests`),
+	        {name : this.answers.name}
 	     );
 	     this.fs.commit(()=>{});
     }
@@ -227,13 +227,13 @@ module.exports = class extends Generator {
     copyPomTemplate(){
 	    //  this.fs.copyTpl(
 	    //     this.templatePath('pom.xml'),
-	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/pom.xml`),
-	    //     {name : this.answers.name, version: this.answers.version, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
+	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}/pom.xml`),
+	    //     {name : this.answers.name, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
 	    //  );
 	     this.fs.copyTpl(
 	        this.templatePath('cloudbuild-pom.xml'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/cloudbuild-pom.xml`),
-	        {name : this.answers.name, version: this.answers.version, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/cloudbuild-pom.xml`),
+	        {name : this.answers.name, basePath: this.answers.basePath, northboundDomain: this.answers.northboundDomain}
 	     );
 	     this.fs.commit(()=>{});
     }
@@ -241,28 +241,28 @@ module.exports = class extends Generator {
     copyOtherTemplates(){
     	this.fs.copyTpl(
 	        this.templatePath('cloudbuild.yaml'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/cloudbuild.yaml`),
-	        {name : this.answers.name, version: this.answers.version}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/cloudbuild.yaml`),
+	        {name : this.answers.name}
 	     );
 	     this.fs.copyTpl(
 	        this.templatePath('gitignore.txt'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/.gitignore`),
-	        {name : this.answers.name, version: this.answers.version}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/.gitignore`),
+	        {name : this.answers.name}
 	     );
 	    //  this.fs.copyTpl(
 	    //     this.templatePath('Jenkinsfile'),
-	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/Jenkinsfile`),
-	    //     {name : this.answers.name, version: this.answers.version}
+	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}/Jenkinsfile`),
+	    //     {name : this.answers.name}
 	    //  );
 	    //  this.fs.copyTpl(
 	    //     this.templatePath('Dockerfile'),
-	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/Dockerfile`),
-	    //     {name : this.answers.name, version: this.answers.version}
+	    //     this.destinationPath(`${this.answers.destination}/${this.answers.name}/Dockerfile`),
+	    //     {name : this.answers.name}
 	    //  );
 	     this.fs.copyTpl(
 	        this.templatePath('README.md'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/README.md`),
-	        {name : this.answers.name, version: this.answers.version}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/README.md`),
+	        {name : this.answers.name}
 	     );
 	     this.fs.commit(()=>{});
     }
@@ -270,8 +270,8 @@ module.exports = class extends Generator {
     copyPackageJsonTemplate(){
 	     this.fs.copyTpl(
 	        this.templatePath('packagejson.txt'),
-	        this.destinationPath(`${this.answers.destination}/${this.answers.name}-${this.answers.version}/package.json`),
-	        {name : this.answers.name, version: this.answers.version}
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/package.json`),
+	        {name : this.answers.name}
 	     );
 	     this.fs.commit(()=>{});
     }
@@ -279,7 +279,7 @@ module.exports = class extends Generator {
     setDefaultPolicies(){
     	if (!this.answers.applyPolicies)
     		return;
-    	var filePath = `${this.answers.destination}/${this.answers.name}-${this.answers.version}/apiproxy/proxies/default.xml`;
+    	var filePath = `${this.answers.destination}/${this.answers.name}/apiproxy/proxies/default.xml`;
 	  	fs.readFile(filePath, function(err, data) {
 	  		parser.parseString(data, function (err, result) {
 	  			//Add FC-Security and OAS-Validation to Preflow - Request
@@ -313,16 +313,16 @@ module.exports = class extends Generator {
 	    this.log('Generating tests...');
 	    this.spawnCommandSync('oatts',
       		['generate', 
-      			'-s', `${this.answers.destination}/${this.answers.name}-${this.answers.version}/openapi/openapi.json`,
+      			'-s', `${this.answers.destination}/${this.answers.name}/openapi/openapi.json`,
       			'--scheme', 'https', 
-      			'-w', `${this.answers.destination}/${this.answers.name}-${this.answers.version}/tests/dev-integration`,
+      			'-w', `${this.answers.destination}/${this.answers.name}/tests/dev-integration`,
       			'--host', `api.acme.com${this.answers.basePath}`,
       			]);
       	this.log('Tests Generated');
     }
 
     print(){
-    	let absolutePath = path.resolve(`${this.answers.destination}/${this.answers.name}-${this.answers.version}`);
+    	let absolutePath = path.resolve(`${this.answers.destination}/${this.answers.name}`);
     	this.log(`APIProxy created - ${absolutePath}`);
     }
 };
