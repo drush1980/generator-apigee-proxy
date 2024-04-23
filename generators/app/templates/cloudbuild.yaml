@@ -87,3 +87,5 @@ steps:
 #   id: functional-testing
 #   entrypoint: 'bash'
 #   args: ['-c', 'node_modules/cucumber/bin/cucumber.js target/test/integration/features']
+options:
+  logging: CLOUD_LOGGING_ONLY
