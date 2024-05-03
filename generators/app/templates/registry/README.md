@@ -1,1 +1,0 @@
-* registry manifest will go here *
