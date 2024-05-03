@@ -70,14 +70,18 @@ module.exports = class extends Generator {
 	}
 
 	async openapiToApigee(){
-	    this.log('Creating API Proxy bundle...');
-	    this.spawnCommandSync('apigee-go-gen',
+	    this.log('Creating API Proxy bundle....');
+	    this.log(`destinationRoot=${this.destinationRoot()}`);
+	    this.log(`contextRoot=${this.contextRoot()}`);
+	    this.log(`templatePath=${this.templatePath}`);
+	    this.log(`destinationPath=${this.destinationPath}`);
+        this.spawnCommandSync('apigee-go-gen',
       		['render', 'apiproxy',
-                '--template', './generators/app/apigee-go-gen/templates/oas3/apiproxy.yaml',
+                '--template', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/apiproxy.yaml`,
                 '--set-oas', `spec=${this.answers.spec}`,
                 '--set', `basepath=${this.answers.basePath}`,
                 '--set', `target_url=${this.answers.targetUrl}`,
-                '--include', './generators/app/apigee-go-gen/templates/oas3/*.tmpl',
+                '--include', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/*.tmpl`,
                 '--output', `${this.answers.destination}/${this.answers.name}`] );
     }
 
