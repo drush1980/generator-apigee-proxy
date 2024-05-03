@@ -72,9 +72,10 @@ module.exports = class extends Generator {
 	async openapiToApigee(){
 	    this.log('Creating API Proxy bundle....');
 	    this.log(`destinationRoot=${this.destinationRoot()}`);
-	    this.log(`contextRoot=${this.contextRoot()}`);
-	    this.log(`templatePath=${this.templatePath}`);
-	    this.log(`destinationPath=${this.destinationPath}`);
+	    this.log(`sourceRoot=${this.sourceRoot()}`);
+	    this.log(`templatePath=${this.templatePath()}`);
+	    this.log(`contextRoot=${this.contextRoot}`);
+        this.log(`destinationPath=${this.destinationPath()}`);
         this.spawnCommandSync('apigee-go-gen',
       		['render', 'apiproxy',
                 '--template', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/apiproxy.yaml`,
