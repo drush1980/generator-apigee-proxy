@@ -42,11 +42,11 @@ steps:
   - name: 'vol1'
     path: '/generated'
   id: generate-proxy
-  args: ['--template', 'apigee-go-gen/templates/oas3/apiproxy.yaml',
+  args: ['--template', 'proxy-templates/oas3/apiproxy.yaml',
          '--set-oas', 'spec=/workspace/openapi/spec.yaml',
          '--set', 'basepath=/v1/yes',
          '--set', 'target_url=https://httpbin/org',
-         '--include', 'apigee-go-gen/templates/oas3/*.tmpl',
+         '--include', 'proxy-templates/oas3/*.tmpl',
          '--output', '.'
   ]
 - name: 'gcr.io/cloud-builders/npm'
