@@ -10,6 +10,7 @@ module.exports = class extends Generator {
 	   this.argument("name", { type: String, required: false });
 	   this.argument("version", { type: String, required: false });
        this.argument("basePath", { type: String, required: false });
+	   this.argument("northboundDomain", { type: String, required: false });       
 	   this.argument("targetUrl", { type: String, required: false });              
 	   this.argument("spec", { type: String, required: false });
 	   this.argument("destination", { type: String, required: false });
@@ -38,6 +39,13 @@ module.exports = class extends Generator {
 				message: "What is your proxy's basePath?",
 				default: '/v1/mock'
 			},
+			{
+				type: 'input',
+				name: 'northboundDomain',
+				message: "What is your proxy's northboundDomain, for ex api.acme.com?",
+				default: 'api.acme.com',
+				validate: validators.northboundDomain
+			},            
 			{
 				type: 'input',
 				name: 'targetUrl', 
