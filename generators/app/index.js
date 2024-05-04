@@ -9,12 +9,12 @@ module.exports = class extends Generator {
 	   super(args, opts);
 	   this.argument("name", { type: String, required: false });
 	   this.argument("version", { type: String, required: false });
-	   this.argument("basePath", { type: String, required: false });
-	   this.argument("northboundDomain", { type: String, required: false });
-	   this.argument("targetUrl", { type: String, required: false });
+	//    this.argument("basePath", { type: String, required: false });
+	//    this.argument("northboundDomain", { type: String, required: false });
+	//    this.argument("targetUrl", { type: String, required: false });
 	   this.argument("spec", { type: String, required: false });
 	   this.argument("destination", { type: String, required: false });
-	   this.argument("applyPolicies", { type: String, required: false });
+	//    this.argument("applyPolicies", { type: String, required: false });
 	   this.optionOrPrompt = OptionOrPrompt;
 	}
 
@@ -34,32 +34,32 @@ module.exports = class extends Generator {
 				default: 'v1',
 				validate: validators.version
 			},
-			{
-				type: 'input',
-				name: 'basePath',
-				message: "What is your proxy's basePath?",
-				default: '/v1/mock'
-			},
-			{
-				type: 'input',
-				name: 'northboundDomain',
-				message: "What is your proxy's northboundDomain, for ex api.acme.com?",
-				default: 'api.acme.com',
-				validate: validators.northboundDomain
-			},
-			{
-				type: 'input',
-				name: 'targetUrl', 
-				message: "What is your proxy's target URL?",
-				default: 'https://mocktarget.apigee.net'
-			},
-			{
-				type: 'input',
-				name: 'spec',
-				message: "Please provide the path of your spec",
-				default: 'https://raw.githubusercontent.com/apigee/api-platform-samples/master/default-proxies/helloworld/openapi/mocktarget3.0.yaml',
-				validate: validators.spec
-			},
+			// {
+			// 	type: 'input',
+			// 	name: 'basePath',
+			// 	message: "What is your proxy's basePath?",
+			// 	default: '/v1/mock'
+			// },
+			// {
+			// 	type: 'input',
+			// 	name: 'northboundDomain',
+			// 	message: "What is your proxy's northboundDomain, for ex api.acme.com?",
+			// 	default: 'api.acme.com',
+			// 	validate: validators.northboundDomain
+			// },
+			// {
+			// 	type: 'input',
+			// 	name: 'targetUrl', 
+			// 	message: "What is your proxy's target URL?",
+			// 	default: 'https://mocktarget.apigee.net'
+			// },
+			// {
+			// 	type: 'input',
+			// 	name: 'spec',
+			// 	message: "Please provide the path of your spec",
+			// 	default: 'https://raw.githubusercontent.com/apigee/api-platform-samples/master/default-proxies/helloworld/openapi/mocktarget3.0.yaml',
+			// 	validate: validators.spec
+			// },
 			{
 				type: 'input',
 				name: 'destination',
@@ -69,17 +69,26 @@ module.exports = class extends Generator {
 		]);
 	}
 
-	async openapiToApigee(){
-	    this.log('Creating API Proxy bundle....');
-        this.spawnCommandSync('apigee-go-gen',
-      		['render', 'apiproxy',
-                '--template', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/apiproxy.yaml`,
-                '--set-oas', `spec=${this.answers.spec}`,
-                '--set', `basepath=${this.answers.basePath}`,
-                '--set', `target_url=${this.answers.targetUrl}`,
-                '--include', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/*.tmpl`,
-                '--output', `${this.answers.destination}/${this.answers.name}`] );
-    }
+	// async openapiToApigee(){
+	//     this.log('Creating API Proxy bundle....');
+    //     this.spawnCommandSync('apigee-go-gen',
+    //   		['render', 'apiproxy',
+    //             '--template', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/apiproxy.yaml`,
+    //             '--set-oas', `spec=${this.answers.spec}`,
+    //             '--set', `basepath=${this.answers.basePath}`,
+    //             '--set', `target_url=${this.answers.targetUrl}`,
+    //             '--include', `/generator-apigee-proxy/generators/app/apigee-go-gen/templates/oas3/*.tmpl`,
+    //             '--output', `${this.answers.destination}/${this.answers.name}`] );
+    // }
+
+    copyGoTemplates(){
+        this.fs.copyTpl(
+           this.templatePath('apigee-go-gen'),
+           this.destinationPath(`${this.answers.destination}/${this.answers.name}/apigee-go-gen`),
+           {name : this.answers.name}
+        );
+        this.fs.commit(()=>{});
+   }
 
     copyConfigResources(){
 	     this.fs.copyTpl(
@@ -140,7 +149,7 @@ module.exports = class extends Generator {
 	    this.log('Generating tests...');
 	    this.spawnCommandSync('oatts',
       		['generate', 
-      			'-s', `${this.answers.destination}/${this.answers.name}/apiproxy/resources/oas/spec.yaml`,
+      			'-s', `${this.answers.destination}/openapi/spec.yaml`,
       			'--scheme', 'https', 
       			'-w', `${this.answers.destination}/${this.answers.name}/tests/dev-integration`,
       			'--host', `api.acme.com${this.answers.basePath}`,
@@ -148,8 +157,8 @@ module.exports = class extends Generator {
       	this.log('Tests Generated');
     }
 
-    print(){
-    	let absolutePath = path.resolve(`${this.answers.destination}/${this.answers.name}`);
-    	this.log(`APIProxy created - ${absolutePath}`);
-    }
+    // print(){
+    // 	let absolutePath = path.resolve(`${this.answers.destination}/${this.answers.name}`);
+    // 	this.log(`APIProxy created - ${absolutePath}`);
+    // }
 };
