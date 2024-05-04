@@ -25,14 +25,6 @@ steps:
   id: fetch-credentials
   entrypoint: 'bash'
   args: [ '-c', "gcloud secrets versions access latest --secret=apigee-org-admin --format='get(payload.data)' | tr '_-' '/+' | base64 -d > admin.json" ]
-# - name: 'gcr.io/cloud-builders/mvn'
-#   id: update-registry
-#   entrypoint: 'bash'
-#   args:
-#     - -c 
-#     - |
-#       source /workspace/build_vars &&
-#       mvn -f cloudbuild-pom.xml -ntp apigee-registry:api apigee-registry:apiversion apigee-registry:apiversionspec apigee-registry:apideployment apigee-registry:apiartifact -P$build_profile -DprojectId=$PROJECT_ID -Doptions=update -DapiConfigFile=./registry/manifest.yaml -Dbearer=${build_token}
 - name: 'gcr.io/cloud-builders/npm'
   id: install-npm-modules
   args: ['install']
@@ -42,8 +34,8 @@ steps:
   args: ['render', 'apiproxy',
          '--template', 'proxy-templates/oas3/apiproxy.yaml',
          '--set-oas', 'spec=/workspace/openapi/spec.yaml',
-         '--set', 'basepath=/v1/yes',
-         '--set', 'target_url=https://httpbin/org',
+         '--set', 'basepath=<%= basePath %>',
+         '--set', 'target_url=<%= targetUrl %>',
          '--include', 'proxy-templates/oas3/*.tmpl',
          '--output', './'
   ]

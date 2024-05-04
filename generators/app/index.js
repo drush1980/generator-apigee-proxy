@@ -9,7 +9,8 @@ module.exports = class extends Generator {
 	   super(args, opts);
 	   this.argument("name", { type: String, required: false });
 	   this.argument("version", { type: String, required: false });
-       this.argument("basePath", { type: String, required: false });       
+       this.argument("basePath", { type: String, required: false });
+	   this.argument("targetUrl", { type: String, required: false });              
 	   this.argument("spec", { type: String, required: false });
 	   this.argument("destination", { type: String, required: false });
 	   this.optionOrPrompt = OptionOrPrompt;
@@ -36,7 +37,13 @@ module.exports = class extends Generator {
 				name: 'basePath',
 				message: "What is your proxy's basePath?",
 				default: '/v1/mock'
-			},            
+			},
+			{
+				type: 'input',
+				name: 'targetUrl', 
+				message: "What is your proxy's target URL?",
+				default: 'https://mocktarget.apigee.net'
+			},
 			{
 				type: 'input',
 				name: 'spec',
@@ -102,7 +109,7 @@ module.exports = class extends Generator {
     	this.fs.copyTpl(
 	        this.templatePath('cloudbuild.yaml'),
 	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/cloudbuild.yaml`),
-	        {name : this.answers.name}
+	        { basePath : this.answers.basePath, targetUrl : this.answers.targetUrl }
 	     );
 	     this.fs.copyTpl(
 	        this.templatePath('gitignore.txt'),
