@@ -38,16 +38,14 @@ steps:
   args: ['install']
 # generate proxy
 - name: 'ghcr.io/apigee/apigee-go-gen'
-  volumes:
-  - name: 'vol1'
-    path: '/generated'
   id: generate-proxy
-  args: ['--template', 'proxy-templates/oas3/apiproxy.yaml',
+  args: ['render', 'apiproxy',
+         '--template', 'proxy-templates/oas3/apiproxy.yaml',
          '--set-oas', 'spec=/workspace/openapi/spec.yaml',
          '--set', 'basepath=/v1/yes',
          '--set', 'target_url=https://httpbin/org',
          '--include', 'proxy-templates/oas3/*.tmpl',
-         '--output', '.'
+         '--output', './'
   ]
 - name: 'gcr.io/cloud-builders/npm'
   id: apigee-lint

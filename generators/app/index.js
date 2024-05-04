@@ -9,6 +9,7 @@ module.exports = class extends Generator {
 	   super(args, opts);
 	   this.argument("name", { type: String, required: false });
 	   this.argument("version", { type: String, required: false });
+       this.argument("basePath", { type: String, required: false });       
 	   this.argument("spec", { type: String, required: false });
 	   this.argument("destination", { type: String, required: false });
 	   this.optionOrPrompt = OptionOrPrompt;
@@ -30,6 +31,12 @@ module.exports = class extends Generator {
 				default: 'v1',
 				validate: validators.version
 			},
+			{
+				type: 'input',
+				name: 'basePath',
+				message: "What is your proxy's basePath?",
+				default: '/v1/mock'
+			},            
 			{
 				type: 'input',
 				name: 'spec',
