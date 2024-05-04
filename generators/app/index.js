@@ -49,7 +49,7 @@ module.exports = class extends Generator {
     copySpec(){
         this.fs.copyTpl(
            this.answers.spec,
-           this.destinationPath(`${this.answers.destination}/${this.answers.name}/openapi`),
+           this.destinationPath(`${this.answers.destination}/${this.answers.name}/openapi/spec.yaml`),
            {name : this.answers.name}
         );
         this.fs.commit(()=>{});
