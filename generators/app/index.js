@@ -57,8 +57,8 @@ module.exports = class extends Generator {
 
     copyGoTemplates(){
         this.fs.copyTpl(
-           this.templatePath('apigee-go-gen'),
-           this.destinationPath(`${this.answers.destination}/${this.answers.name}/apigee-go-gen`),
+           this.templatePath('proxy-templates'),
+           this.destinationPath(`${this.answers.destination}/${this.answers.name}/proxy-templates`),
            {name : this.answers.name}
         );
         this.fs.commit(()=>{});
