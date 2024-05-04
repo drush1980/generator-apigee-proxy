@@ -123,7 +123,7 @@ module.exports = class extends Generator {
 	    this.log('Generating tests...');
 	    this.spawnCommandSync('oatts',
       		['generate', 
-      			'-s', `${this.answers.destination}/openapi/spec.yaml`,
+      			'-s', this.answers.spec,
       			'--scheme', 'https', 
       			'-w', `${this.answers.destination}/${this.answers.name}/tests/dev-integration`,
       			'--host', `api.acme.com${this.answers.basePath}`,
