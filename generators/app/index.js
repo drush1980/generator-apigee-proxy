@@ -117,7 +117,12 @@ module.exports = class extends Generator {
     	this.fs.copyTpl(
 	        this.templatePath('cloudbuild.yaml'),
 	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/cloudbuild.yaml`),
-	        { basePath : this.answers.basePath, targetUrl : this.answers.targetUrl }
+	        {name : this.answers.name, basePath : this.answers.basePath, targetUrl : this.answers.targetUrl}
+	     );
+	     this.fs.copyTpl(
+	        this.templatePath('skaffold.yaml'),
+	        this.destinationPath(`${this.answers.destination}/${this.answers.name}/skaffold.yaml`),
+	        {name : this.answers.name}
 	     );
 	     this.fs.copyTpl(
 	        this.templatePath('gitignore.txt'),

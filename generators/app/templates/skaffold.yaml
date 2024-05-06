@@ -1,0 +1,26 @@
+apiVersion: skaffold/v4beta7
+kind: Config
+customActions:
+- name: custom-render
+  containers:
+  - name: render
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli
+    command: ['/bin/bash']
+    args:
+      - '-c'
+      - |-
+        echo "Sample manifest rendered content" > manifest.txt
+        gsutil cp manifest.txt $CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.txt
+        echo {\"resultStatus\": \"SUCCEEDED\", \"manifestFile\": \"$CLOUD_DEPLOY_OUTPUT_GCS_PATH/manifest.txt\"} > results.json
+        gsutil cp results.json $CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json
+- name: custom-deploy
+  containers:
+  - name: deploy
+    image: us-central1-docker.pkg.dev/drush-apigee/apigee-golden-path/cloudsdk-apigeecli
+    command: ['/bin/bash']
+    args:
+      - '-c'
+      - |-
+        /root/.apigeecli/bin/apigeecli apis deploy -n <%= name %> -o $CLOUD_DEPLOY_customTarget_apigeeOrg -e $CLOUD_DEPLOY_TARGET -t $(gcloud auth print-access-token) --ovr --disable-check --wait
+        echo {\"resultStatus\": \"SUCCEEDED\"} > results.json
+        gsutil cp results.json $CLOUD_DEPLOY_OUTPUT_GCS_PATH/results.json

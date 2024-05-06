@@ -74,14 +74,24 @@ steps:
       source /workspace/build_vars &&
       mvn -f cloudbuild-pom.xml -ntp apigee-enterprise:configure -P${build_profile} -Dorg=$PROJECT_ID -Ddeployment.suffix=${build_prefix}
 - name: 'gcr.io/cloud-builders/mvn'
-  id: deploy
+  id: create-proxy
   entrypoint: 'bash'
   args:
     - -c 
     - |
       # Read environment variables from disk
       source /workspace/build_vars &&
-      mvn -f cloudbuild-pom.xml -ntp apigee-enterprise:deploy -P${build_profile} -Dorg=$PROJECT_ID -Ddeployment.suffix=${build_prefix} -Dbearer=${build_token}
+      mvn -f cloudbuild-pom.xml -ntp apigee-enterprise:deploy -P${build_profile} -Dorg=$PROJECT_ID -Ddeployment.suffix=${build_prefix} -Dbearer=${build_token} -Dapigee.options=inactive
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: create-release-deployment
+  entrypoint: 'gcloud'
+  args: [
+          'deploy', 'releases', 'create',
+          'demo-api-$BRANCH_NAME-$SHORT_SHA',
+          '--project=$PROJECT_ID',
+          '--region=us-central1',
+          '--delivery-pipeline=apigee-pipeline'
+        ]
 # - name: 'gcr.io/cloud-builders/nodejs/yarn'
 #   id: devint-testing
 #   entrypoint: 'bash'
