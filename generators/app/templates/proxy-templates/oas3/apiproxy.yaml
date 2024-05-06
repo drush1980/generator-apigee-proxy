@@ -53,7 +53,7 @@ TargetEndpoints:
   - TargetEndpoint:
       .name: default
       HTTPTargetConnection:
-        #{{- $scheme := include "get_scheme" (index $.Values.spec.servers 0 "url") }}
+        #{{- $scheme := include "get_scheme" $.Values.target_url }}
         #{{- if eq $scheme "https" }}
         SSLInfo:
           Enabled: true
