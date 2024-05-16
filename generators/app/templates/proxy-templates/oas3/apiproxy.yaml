@@ -16,7 +16,7 @@ APIProxy:
   .revision: 1
   .name: {{ slug_make ($.Values.spec | dig "info" "x-serviceName" $.Values.spec.info.title) }}
   DisplayName: {{ $.Values.spec.info.title }}
-  Description: {{ $.Values.spec.info.description }}
+  Description: "@description"
 Policies:
   $ref: ./policies.yaml#/
 ProxyEndpoints:
