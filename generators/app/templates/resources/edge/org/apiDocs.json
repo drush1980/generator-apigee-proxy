@@ -1,0 +1,20 @@
+[
+    {
+        "title": "<%= name %>",
+        "description": "A sample API that was pushed from the CI/CD pipeline",
+        "anonAllowed": true,
+        "imageUrl": "https://www.paypalobjects.com/devdoc/NewHomepage/svg/ppcp-paypal.svg",
+        "requireCallbackUrl": false,
+        "published": true,
+        "apiProductName": "paypal-demo",
+        "categories": [
+            "Core"
+        ],
+        "oasDocumentation": {
+            "spec": {
+                "displayName": "spec",
+                "file": "./openapi/spec.yaml"
+            }
+        }
+    }
+]
