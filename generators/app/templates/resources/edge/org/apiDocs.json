@@ -6,7 +6,7 @@
         "imageUrl": "https://www.paypalobjects.com/devdoc/NewHomepage/svg/ppcp-paypal.svg",
         "requireCallbackUrl": false,
         "published": true,
-        "apiProductName": "paypal-demo",
+        "apiProductName": "<%= name %>-product",
         "categories": [
             "Core"
         ],

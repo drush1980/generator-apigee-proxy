@@ -1,0 +1,21 @@
+[
+    {
+       "name":"<%= name %>-product",
+       "displayName":"<%= name %>",
+       "description":"<%= name %>",
+       "approvalType":"auto",
+       "environments":[
+          "default-dev"
+       ],
+       "attributes": [
+        {
+            "name": "access",
+            "value": "public"
+        }
+       ],
+       "quota":"10000",
+       "quotaInterval":"1",
+       "quotaTimeUnit":"month",
+       "operationGroup":{}
+    }
+ ]

@@ -92,6 +92,24 @@ steps:
           '--region=us-central1',
           '--delivery-pipeline=apigee-pipeline'
         ]
+- name: 'gcr.io/cloud-builders/mvn'
+  id: create-api-product
+  entrypoint: 'bash'
+  args:
+    - -c 
+    - |
+      # Read environment variables from disk
+      source /workspace/build_vars &&
+      mvn -f cloudbuild-pom.xml -ntp apigee-config:apiproducts -P${build_profile} -Dorg=$PROJECT_ID -Dbearer=${build_token}
+- name: 'gcr.io/cloud-builders/mvn'
+  id: push-portal-docs
+  entrypoint: 'bash'
+  args:
+    - -c 
+    - |
+      # Read environment variables from disk
+      source /workspace/build_vars &&
+      mvn -f cloudbuild-pom.xml -ntp apigee-config:apidocs -P${build_profile} -Dorg=$PROJECT_ID -Dbearer=${build_token} -DsiteId=drush-apigee-paypaldemo
 # - name: 'gcr.io/cloud-builders/nodejs/yarn'
 #   id: devint-testing
 #   entrypoint: 'bash'
