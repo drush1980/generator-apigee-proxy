@@ -87,7 +87,7 @@ steps:
   entrypoint: 'gcloud'
   args: [
           'deploy', 'releases', 'create',
-          'demo-api-$BRANCH_NAME-$SHORT_SHA',
+          '<%= name %>-$BRANCH_NAME-$SHORT_SHA',
           '--project=$PROJECT_ID',
           '--region=us-central1',
           '--delivery-pipeline=apigee-pipeline'
