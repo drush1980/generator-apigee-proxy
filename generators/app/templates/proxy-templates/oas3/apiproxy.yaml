@@ -30,6 +30,9 @@ ProxyEndpoints:
       Flows:
       #{{- range $path, $pathItem := $.Values.spec.paths }}
         #{{- range $verb, $opItem := $pathItem }}
+          #{{- if not (regexMatch "^(post|get|put|delete|trace|options|head|patch)$" $verb) }}
+            #{{- continue }}
+          #{{- end }}
           #{{- if eq (include "get_visibility" $opItem) "INTERNAL" }}
               #{{- fmt_printf "Skipping internal operation '%s' (%s %s)\n" $opItem.operationId $verb $path }}
               #{{-  continue }}
