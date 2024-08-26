@@ -16,7 +16,7 @@ customActions:
 - name: custom-deploy
   containers:
   - name: deploy
-    image: us-central1-docker.pkg.dev/drush-apigee/apigee-golden-path/cloudsdk-apigeecli
+    image: us-central1-docker.pkg.dev/dynolab-153020/apigee-golden-path/cloudsdk-apigeecli
     command: ['/bin/bash']
     args:
       - '-c'
