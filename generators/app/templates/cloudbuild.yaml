@@ -109,7 +109,7 @@ steps:
     - |
       # Read environment variables from disk
       source /workspace/build_vars &&
-      mvn -f cloudbuild-pom.xml -ntp apigee-config:apidocs -P${build_profile} -Dorg=$PROJECT_ID -Dbearer=${build_token} -DsiteId=dynolab-153020-demo
+      mvn -f cloudbuild-pom.xml -ntp apigee-config:apidocs -P${build_profile} -Dorg=$PROJECT_ID -Dbearer=${build_token} -DsiteId=${_PORTAL_SITE_ID}
 # - name: 'gcr.io/cloud-builders/nodejs/yarn'
 #   id: devint-testing
 #   entrypoint: 'bash'
