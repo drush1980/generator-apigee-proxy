@@ -90,7 +90,7 @@ steps:
           '<%= name %>-$BRANCH_NAME-$SHORT_SHA',
           '--project=$PROJECT_ID',
           '--region=us-central1',
-          '--delivery-pipeline=apigee-deploy-pipeline'
+          '--delivery-pipeline=apigee-pipeline'
         ]
 - name: 'gcr.io/cloud-builders/mvn'
   id: create-api-product
