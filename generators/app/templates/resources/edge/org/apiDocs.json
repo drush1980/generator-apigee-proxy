@@ -3,7 +3,7 @@
         "title": "<%= name %>",
         "description": "A sample API that was pushed from the CI/CD pipeline",
         "anonAllowed": true,
-        "imageUrl": "https://www.paypalobjects.com/devdoc/NewHomepage/svg/ppcp-paypal.svg",
+        "imageUrl": "https://t3.ftcdn.net/jpg/04/41/36/64/360_F_441366451_tVc5zqCirwU2Fwp6jBvxaMK6AgjYLWxM.jpg",
         "requireCallbackUrl": false,
         "published": true,
         "apiProductName": "<%= name %>-product",
