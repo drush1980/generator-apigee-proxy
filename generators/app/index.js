@@ -157,4 +157,16 @@ module.exports = class extends Generator {
       			]);
       	this.log('Tests Generated');
     }
+
+   async openapiToApigee(){
+	    this.log('Creating API Proxy bundle...');
+	    this.spawnCommandSync('apigee-go-gen',
+      		['render', 'apiproxy',
+                '--template', `${this.answers.destination}/app/templates/proxy-templates/oas3/apiproxy.yaml`,
+                '--set-oas', `spec=${this.answers.spec}`,
+                '--set', `basepath=${this.answers.basePath}`,
+                '--set', `target_url=${this.answers.targetUrl}`,
+                '--include', `${this.answers.destination}/app/templates/proxy-templates/oas3/*.tmpl`,
+                '--output', `${this.answers.destination}/${this.answers.name}`] );
+    }
 };
