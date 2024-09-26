@@ -14,6 +14,7 @@ module.exports = class extends Generator {
 	   this.argument("targetUrl", { type: String, required: false });              
 	   this.argument("spec", { type: String, required: false });
 	   this.argument("destination", { type: String, required: false });
+	   this.argument("generateProxy", { type: Boolean, required: false });
 	   this.optionOrPrompt = OptionOrPrompt;
 	}
 
@@ -69,7 +70,7 @@ module.exports = class extends Generator {
 				type: 'input',
 				name: 'generateProxy',
 				message: "Please specify whether to generate a proxy bundle",
-				default: 'false'
+				default: false
 			}
 		]);
 	}
