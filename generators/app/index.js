@@ -61,9 +61,9 @@ module.exports = class extends Generator {
 			},
 			{
 				type: 'input',
-				name: 'destination',
-				message: "Please provide the destination path of your proxy",
-				default: '.'
+				name: 'generateProxy',
+				message: "Please specify whether to generate a proxy bundle",
+				default: 'false'
 			}
 		]);
 	}
@@ -159,14 +159,16 @@ module.exports = class extends Generator {
     }
 
    openapiToApigee(){
-	    this.log('Creating API Proxy bundle...');
-	    this.spawnCommandSync('apigee-go-gen',
-      		['render', 'apiproxy',
-                '--template', `${this.answers.destination}/${this.answers.name}/proxy-templates/oas3/apiproxy.yaml`,
-                '--set-oas', `spec=${this.answers.spec}`,
-                '--set', `basepath=${this.answers.basePath}`,
-                '--set', `target_url=${this.answers.targetUrl}`,
-                '--include', `${this.answers.destination}/${this.answers.name}/proxy-templates/oas3/*.tmpl`,
-                '--output', `${this.answers.destination}/${this.answers.name}`] );
+        if(this.answers.generateProxy) {
+            this.log('Creating API Proxy bundle...');
+            this.spawnCommandSync('apigee-go-gen',
+                  ['render', 'apiproxy',
+                    '--template', `${this.answers.destination}/${this.answers.name}/proxy-templates/oas3/apiproxy.yaml`,
+                    '--set-oas', `spec=${this.answers.spec}`,
+                    '--set', `basepath=${this.answers.basePath}`,
+                    '--set', `target_url=${this.answers.targetUrl}`,
+                    '--include', `${this.answers.destination}/${this.answers.name}/proxy-templates/oas3/*.tmpl`,
+                    '--output', `${this.answers.destination}/${this.answers.name}`] );    
+        }
     }
 };
