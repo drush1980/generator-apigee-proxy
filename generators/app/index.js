@@ -160,7 +160,7 @@ module.exports = class extends Generator {
     }
 
    openapiToApigee(){
-        if(this.answers.generateProxy) {
+        if(this.options.generateProxy) {
             this.log('Creating API Proxy bundle...');
             this.spawnCommandSync('apigee-go-gen',
                   ['render', 'apiproxy',
