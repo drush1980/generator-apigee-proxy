@@ -158,7 +158,7 @@ module.exports = class extends Generator {
       	this.log('Tests Generated');
     }
 
-   async openapiToApigee(){
+   openapiToApigee(){
 	    this.log('Creating API Proxy bundle...');
 	    this.spawnCommandSync('apigee-go-gen',
       		['render', 'apiproxy',
