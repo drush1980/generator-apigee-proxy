@@ -61,6 +61,12 @@ module.exports = class extends Generator {
 			},
 			{
 				type: 'input',
+				name: 'destination',
+				message: "Please provide the destination path of your proxy",
+				default: '.'
+			},            
+			{
+				type: 'input',
 				name: 'generateProxy',
 				message: "Please specify whether to generate a proxy bundle",
 				default: 'false'
