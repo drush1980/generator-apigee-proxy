@@ -26,7 +26,13 @@ ProxyEndpoints:
         .name: PreFlow
         Request:
           - Step:
+              Name: CORS-VerifyOrigin
+          - Step:
+              Name: FC-Security
+              Condition: request.verb != "OPTIONS"
+          - Step:
               Name: OAS-Validate
+              Condition: request.verb != "OPTIONS"
       Flows:
       #{{- range $path, $pathItem := $.Values.spec.paths }}
         #{{- range $verb, $opItem := $pathItem }}
@@ -47,6 +53,21 @@ ProxyEndpoints:
             Request:
               - Step:
                   Name: RF-CatchAll
+      PostFlow:
+        .name: PostFlow
+        Request:
+        Response:
+      PostClientFlow:
+        .name: SamplePostClientFlow
+        Description: Processed after the response is sent back to the client.
+        Response:
+          Step:
+            Name: ML-Logging-OK
+      DefaultFaultRule:
+        .name: all
+        AlwaysEnforce: true
+        Step:
+          Name: FC-FaultHandling
       HTTPProxyConnection:
         BasePath: {{ $.Values.basepath }}
       RouteRule:
