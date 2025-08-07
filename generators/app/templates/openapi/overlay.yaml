@@ -1,0 +1,10 @@
+overlay: 1.0.0
+info:
+  title: Apigee Overlay
+  version: 1.0.0
+# Enter overlay items here e.g.
+# actions:
+#   - target: $.info
+#     update:
+#       x-sa-rate: 200pm
+#       x-apigee-logging: true
