@@ -78,6 +78,15 @@ module.exports = class extends Generator {
         this.fs.commit(()=>{});
    }
 
+    copyOverlay(){
+        this.fs.copyTpl(
+            this.templatePath('openapi/overlay.yaml'),
+            this.destinationPath(`${this.answers.destination}/${this.answers.name}/openapi/spec.yaml`),
+            {name : this.answers.name}
+        );
+        this.fs.commit(()=>{});
+    }
+
     copyGoTemplates(){
         this.fs.copyTpl(
            this.templatePath('proxy-templates'),
