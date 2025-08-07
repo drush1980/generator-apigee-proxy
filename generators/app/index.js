@@ -81,7 +81,7 @@ module.exports = class extends Generator {
     copyOverlay(){
         this.fs.copyTpl(
             this.templatePath('openapi/overlay.yaml'),
-            this.destinationPath(`${this.answers.destination}/${this.answers.name}/openapi/spec.yaml`),
+            this.destinationPath(`${this.answers.destination}/${this.answers.name}/openapi/overlay.yaml`),
             {name : this.answers.name}
         );
         this.fs.commit(()=>{});
