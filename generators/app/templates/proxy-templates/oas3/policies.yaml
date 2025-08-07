@@ -91,4 +91,4 @@
     DisplayName: FC-FaultHandling
     FaultRules: {}
     Properties: {}
-    SharedFlowBundle: SF-FaultHandler-v1    
+    SharedFlowBundle: SF-FaultHandler-v1

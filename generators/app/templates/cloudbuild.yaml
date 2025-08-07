@@ -25,15 +25,16 @@ steps:
   id: fetch-credentials
   entrypoint: 'bash'
   args: [ '-c', "gcloud secrets versions access latest --secret=apigee-org-admin --format='get(payload.data)' | tr '_-' '/+' | base64 -d > admin.json" ]
-- name: 'gcr.io/cloud-builders/npm'
+- name: 'node:alpine'
   id: install-npm-modules
+  entrypoint: 'npm'
   args: ['install']
 # apply overlay
-- name: 'ghcr.io/apigee/apigee-go-gen'
+- name: 'gcr.io/apigee-hw/apigee-go-gen:latest'
   id: apply-overlay
   args: ['transform', 'oas-overlay',
          '--spec=/workspace/openapi/spec.yaml',
-         '--spec=/workspace/openapi/overlay.yaml',
+         '--overlay=/workspace/openapi/overlay.yaml',
          '--output', '/workspace/openapi/spec-overlaid.yaml'
   ]
 # generate proxy
@@ -47,7 +48,7 @@ steps:
 #          '--include', 'proxy-templates/oas3/*.tmpl',
 #          '--output', './'
 #   ]
-- name: 'ghcr.io/apigee/apigee-go-gen'
+- name: 'gcr.io/apigee-hw/apigee-go-gen:latest'
   id: generate-proxy
   entrypoint: 'sh'
   args:
@@ -75,8 +76,9 @@ steps:
     fi
     env > /workspace/build_vars2
 
-- name: 'gcr.io/cloud-builders/npm'
+- name: 'node:alpine'
   id: apigee-lint
+  entrypoint: 'npm'
   args: ['run', 'apigeelint']
 # - name: 'gcr.io/cloud-builders/nodejs/yarn'
 #   id: unit-testing-and-code-coverage

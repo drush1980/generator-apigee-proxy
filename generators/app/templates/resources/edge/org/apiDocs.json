@@ -8,12 +8,12 @@
         "published": true,
         "apiProductName": "<%= name %>-product",
         "categories": [
-            "Core"
+            "Example"
         ],
         "oasDocumentation": {
             "spec": {
                 "displayName": "spec",
-                "file": "./openapi/spec.yaml"
+                "file": "./openapi/spec-overlaid.yaml"
             }
         }
     }
