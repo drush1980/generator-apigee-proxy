@@ -1,4 +1,4 @@
-#  Copyright 2024 Google LLC
+#  Copyright 2025 Google LLC
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -11,7 +11,37 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
----
+
+- SpikeArrest:
+    .continueOnError: false
+    .enabled: true
+    .name: SA-ByClientIp
+    DisplayName: SA-ByClientIp
+    Properties: {}
+    Identifier:
+      .ref: client.ip
+    # The example below sets the Rate value dynamically from the render context
+    # You can pass the value like this --set spike_arrest_rate=300pm in the command line
+    # If the value is unset, it defaults to 100pm
+    Rate: {{ or (index $.Values.spec.info "x-apigee-spike-arrest-rate") "100pm" }}
+#{{ if index $.Values.spec.info "x-apigee-logging" }}
+- FlowCallout:
+    .continueOnError: false
+    .enabled: true
+    .name: FC-CloudLogging
+    DisplayName: FC-CloudLogging
+    Properties: {}
+    SharedFlowBundle: cloud-logging-v1
+#{{end}}
+#{{ if index $.Values.spec.info "x-apigee-authz-idp" }}
+- FlowCallout:
+    .continueOnError: false
+    .enabled: true
+    .name: FC-AuthorizeIdPToken
+    DisplayName: FC-AuthorizeIdPToken
+    Properties: {}
+    SharedFlowBundle: authorize-idp-access-tokens
+#{{end}}
 - OASValidation:
     .continueOnError: false
     .enabled: true
@@ -19,6 +49,18 @@
     DisplayName: OAS-Validate
     Source: request
     OASResource: oas://spec.yaml
+#{{ range $name, $scheme := $.Values.spec.components.securitySchemes }}
+#{{ if eq $scheme.type "apiKey" }}
+- VerifyAPIKey:
+    .continueOnError: false
+    .enabled: true
+    .name: VA-VerifyAPIKey
+    DisplayName: VA-VerifyAPIKey
+    Properties: {}
+    APIKey:
+      .ref: request.{{ if eq $scheme.in "query" }}queryparam{{ else }}{{ $scheme.in }}{{ end }}.{{ $scheme.name }}
+#{{ end }}
+#{{ end }}
 - RaiseFault:
     .continueOnError: false
     .enabled: true
@@ -37,16 +79,6 @@
         StatusCode: 404
         ReasonPhrase: Not found
     IgnoreUnresolvedVariables: true
-- MessageLogging:
-    .name: ML-Logging-OK
-    Syslog:
-      Message: '[3f509b58 tag="{organization.name}.{apiproxy.name}.{environment.name}"]'
-      Host: example.loggly.com
-      Port: 514
-      Protocol: TCP
-      FormatMessage: true
-      DateFormat: yyMMdd-HH:mm:ss.SSS
-    logLevel: ALERT
 - CORS:
     .continueOnError: false
     .enabled: true
@@ -60,21 +92,3 @@
     AllowCredentials: true
     GeneratePreflightResponse: true
     IgnoreUnresolvedVariables: true
-- FlowCallout:
-    .async: false
-    .continueOnError: false
-    .enabled: false
-    .name: FC-Security
-    DisplayName: FC-Security
-    FaultRules: {}
-    Properties: {}
-    SharedFlowBundle: SF-Security-v1
-- FlowCallout:
-    .async: false
-    .continueOnError: false
-    .enabled: true
-    .name: FC-FaultHandling
-    DisplayName: FC-FaultHandling
-    FaultRules: {}
-    Properties: {}
-    SharedFlowBundle: SF-FaultHandler-v1

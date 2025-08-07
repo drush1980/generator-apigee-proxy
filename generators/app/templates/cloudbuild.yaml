@@ -28,17 +28,53 @@ steps:
 - name: 'gcr.io/cloud-builders/npm'
   id: install-npm-modules
   args: ['install']
+# apply overlay
+- name: 'ghcr.io/apigee/apigee-go-gen'
+  id: apply-overlay
+  args: ['transform', 'oas-overlay',
+         '--spec=/workspace/openapi/spec.yaml',
+         '--spec=/workspace/openapi/overlay.yaml'
+         '--output', '/workspace/openapi/spec-overlaid.yaml'
+  ]
 # generate proxy
+# - name: 'ghcr.io/apigee/apigee-go-gen'
+#   id: generate-proxy
+#   args: ['render', 'apiproxy',
+#          '--template', 'proxy-templates/oas3/apiproxy.yaml',
+#          '--set-oas', 'spec=/workspace/openapi/spec-overlaid.yaml',
+#          '--set', 'basepath=<%= basePath %>',
+#          '--set', 'target_url=<%= targetUrl %>',
+#          '--include', 'proxy-templates/oas3/*.tmpl',
+#          '--output', './'
+#   ]
 - name: 'ghcr.io/apigee/apigee-go-gen'
   id: generate-proxy
-  args: ['render', 'apiproxy',
-         '--template', 'proxy-templates/oas3/apiproxy.yaml',
-         '--set-oas', 'spec=/workspace/openapi/spec.yaml',
-         '--set', 'basepath=<%= basePath %>',
-         '--set', 'target_url=<%= targetUrl %>',
-         '--include', 'proxy-templates/oas3/*.tmpl',
-         '--output', './'
-  ]
+  entrypoint: 'sh'
+  args:
+  - -c
+  - |
+    export NEW_ENDPOINT="https://${_APIGEE_DOMAIN}/${_API_NAME}"
+    export IS_MOCK=$(apigee-go-gen transform yaml-to-json \
+    --input /workspace/openapi/spec-overlaid.yaml | \
+    jq -r '(if has(".info.x-mock") then .info."x-mock" else false end) or (if has("servers") then false else true end)')
+    apigee-go-gen transform yaml-to-json \
+    --input /workspace/openapi/spec-overlaid.yaml | \
+    jq -r --arg url "$$NEW_ENDPOINT" 'if has("servers") then .servers += [{"url": $$url}] else . += {servers: [{"url": $$url}]} end' | \
+    apigee-go-gen transform json-to-yaml --output /workspace/openapi/spec-overlaid.yaml
+    if [ $$IS_MOCK == true ]; then
+      apigee-go-gen mock oas \
+      --input /workspace/openapi/spec-overlaid.yaml \
+      --output "./"
+    else
+      apigee-go-gen render apiproxy \
+      --template proxy-templates/oas3/apiproxy.yaml \
+      --set-oas spec=/workspace/openapi/spec-overlaid.yaml \
+      --include proxy-templates/oas3/*.tmpl \
+      --output "./" \
+      -v false
+    fi
+    env > /workspace/build_vars2
+
 - name: 'gcr.io/cloud-builders/npm'
   id: apigee-lint
   args: ['run', 'apigeelint']

@@ -1,4 +1,4 @@
-#  Copyright 2024 Google LLC
+#  Copyright 2025 Google LLC
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ APIProxy:
   .revision: 1
   .name: {{ slug_make ($.Values.spec | dig "info" "x-serviceName" $.Values.spec.info.title) }}
   DisplayName: {{ $.Values.spec.info.title }}
-  Description: "@description"
-Policies:
-  $ref: ./policies.yaml#/
+  Description: |- 
+    {{ $.Values.spec.info.description | nindent 4 }}
+Policies: {{ include "./policies.yaml" . | nindent 2 }}
 ProxyEndpoints:
   - ProxyEndpoint:
       .name: default
@@ -26,10 +26,17 @@ ProxyEndpoints:
         .name: PreFlow
         Request:
           - Step:
-              Name: CORS-VerifyOrigin
+              Name: SA-ByClientIp
+        #{{ if index $.Values.spec.info "x-apigee-authz-idp" }}
           - Step:
-              Name: FC-Security
-              Condition: request.verb != "OPTIONS"
+              Name: FC-AuthorizeIdPToken
+        #{{end}}
+        #{{ range $name, $scheme := $.Values.spec.components.securitySchemes }}
+        #{{ if eq $scheme.type "apiKey" }}
+          - Step:
+              Name: VA-VerifyAPIKey
+        #{{ end }}
+        #{{ end }}
           - Step:
               Name: OAS-Validate
               Condition: request.verb != "OPTIONS"
@@ -53,23 +60,16 @@ ProxyEndpoints:
             Request:
               - Step:
                   Name: RF-CatchAll
-      PostFlow:
-        .name: PostFlow
-        Request:
-        Response:
       PostClientFlow:
-        .name: SamplePostClientFlow
+        .name: PostClientFlow
         Description: Processed after the response is sent back to the client.
         Response:
+        #{{ if index $.Values.spec.info "x-apigee-logging" }}
           Step:
-            Name: ML-Logging-OK
-      DefaultFaultRule:
-        .name: all
-        AlwaysEnforce: true
-        Step:
-          Name: FC-FaultHandling
+            Name: FC-CloudLogging
+        #{{end}}
       HTTPProxyConnection:
-        BasePath: {{ $.Values.basepath }}
+        BasePath: {{ include "get_basepath" (index $.Values.spec.servers 0 "url") }}
       RouteRule:
         .name: default
         TargetEndpoint: default
@@ -77,18 +77,19 @@ TargetEndpoints:
   - TargetEndpoint:
       .name: default
       HTTPTargetConnection:
-        #{{- $scheme := include "get_scheme" $.Values.target_url }}
+        #{{- $scheme := include "get_scheme" (index $.Values.spec.servers 0 "url") }}
         #{{- if eq $scheme "https" }}
         SSLInfo:
           Enabled: true
           Enforce: true
           IgnoreValidationErrors: true
         #{{- end }}
-        URL: {{ $.Values.target_url }}
+        URL: {{ include "get_target_url" $.Values.spec.servers }}
 Resources:
   - Resource:
       Type: oas
       #{{ os_writefile "./spec.yaml" $.Values.spec_string }}
+      #{{ remove_oas_extensions "./spec.yaml" }}
       Path: ./spec.yaml
   - Resource:
       Type: properties
