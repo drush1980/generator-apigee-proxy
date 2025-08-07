@@ -23,7 +23,7 @@
     # The example below sets the Rate value dynamically from the render context
     # You can pass the value like this --set spike_arrest_rate=300pm in the command line
     # If the value is unset, it defaults to 100pm
-    Rate: {{ or (index $.Values.spec.info "x-apigee-spike-arrest-rate") "100pm" }}
+    Rate: {{ or (index $.Values.spec.info "x-sa-rate") "100pm" }}
 #{{ if index $.Values.spec.info "x-apigee-logging" }}
 - FlowCallout:
     .continueOnError: false
@@ -33,22 +33,6 @@
     Properties: {}
     SharedFlowBundle: cloud-logging-v1
 #{{end}}
-#{{ if index $.Values.spec.info "x-apigee-authz-idp" }}
-- FlowCallout:
-    .continueOnError: false
-    .enabled: true
-    .name: FC-AuthorizeIdPToken
-    DisplayName: FC-AuthorizeIdPToken
-    Properties: {}
-    SharedFlowBundle: authorize-idp-access-tokens
-#{{end}}
-- OASValidation:
-    .continueOnError: false
-    .enabled: true
-    .name: OAS-Validate
-    DisplayName: OAS-Validate
-    Source: request
-    OASResource: oas://spec.yaml
 #{{ range $name, $scheme := $.Values.spec.components.securitySchemes }}
 #{{ if eq $scheme.type "apiKey" }}
 - VerifyAPIKey:
@@ -61,6 +45,13 @@
       .ref: request.{{ if eq $scheme.in "query" }}queryparam{{ else }}{{ $scheme.in }}{{ end }}.{{ $scheme.name }}
 #{{ end }}
 #{{ end }}
+- OASValidation:
+    .continueOnError: false
+    .enabled: true
+    .name: OAS-Validate
+    DisplayName: OAS-Validate
+    Source: request
+    OASResource: oas://spec.yaml
 - RaiseFault:
     .continueOnError: false
     .enabled: true
@@ -92,3 +83,12 @@
     AllowCredentials: true
     GeneratePreflightResponse: true
     IgnoreUnresolvedVariables: true
+- FlowCallout:
+    .async: false
+    .continueOnError: false
+    .enabled: true
+    .name: FC-FaultHandling
+    DisplayName: FC-FaultHandling
+    FaultRules: {}
+    Properties: {}
+    SharedFlowBundle: SF-FaultHandler-v1    

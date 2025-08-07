@@ -33,7 +33,7 @@ steps:
   id: apply-overlay
   args: ['transform', 'oas-overlay',
          '--spec=/workspace/openapi/spec.yaml',
-         '--spec=/workspace/openapi/overlay.yaml'
+         '--spec=/workspace/openapi/overlay.yaml',
          '--output', '/workspace/openapi/spec-overlaid.yaml'
   ]
 # generate proxy

@@ -27,10 +27,6 @@ ProxyEndpoints:
         Request:
           - Step:
               Name: SA-ByClientIp
-        #{{ if index $.Values.spec.info "x-apigee-authz-idp" }}
-          - Step:
-              Name: FC-AuthorizeIdPToken
-        #{{end}}
         #{{ range $name, $scheme := $.Values.spec.components.securitySchemes }}
         #{{ if eq $scheme.type "apiKey" }}
           - Step:
@@ -68,6 +64,11 @@ ProxyEndpoints:
           Step:
             Name: FC-CloudLogging
         #{{end}}
+      DefaultFaultRule:
+        .name: all
+        AlwaysEnforce: true
+        Step:
+          Name: FC-FaultHandling        
       HTTPProxyConnection:
         BasePath: {{ include "get_basepath" (index $.Values.spec.servers 0 "url") }}
       RouteRule:
